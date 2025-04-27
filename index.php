@@ -1,0 +1,111 @@
+<?php
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "root";
+$dbname = "test";
+
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Récupérer les produits (même si ici tu ne les utilises pas encore)
+    $stmt = $conn->query("SELECT * FROM produits");
+    $produits = $stmt->fetchAll();
+} catch(PDOException $e) {
+    echo "Erreur : " . $e->getMessage();
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mayma Shop - Accueil</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+
+<!-- SLIDER -->
+<h1><b><i>Maymashop</i></b></h1>
+
+<section class="slider">
+  <div class="slides">
+    <div class="slide">
+      <img src="sl1.png" alt="Produit 1">
+    </div>
+    <div class="slide">
+      <img src="sl2.png" alt="Produit 2">
+    </div>
+  </div>
+
+  <!-- Boutons pour naviguer -->
+  <button class="prev">&#10094;</button>
+  <button class="next">&#10095;</button>
+</section>
+
+<!-- PRODUITS -->
+<section class="products">
+  <h2>Découvrez notre gamme de produits</h2>
+
+  <div class="products-row">
+    <div class="product-item">
+      <img src="img8.avif" alt="Produit 1">
+      <a href="cristal_chaud.php" class="voir-plus">Voir plus</a>
+    </div>
+
+    <div class="product-item">
+      <img src="img10.avif" alt="Produit 2">
+      <a href="indolore.php" class="voir-plus">Voir plus</a>
+    </div>
+
+    <div class="product-item">
+      <img src="img2.avif" alt="Produit 3">
+      <a href="portable.php" class="voir-plus">Voir plus</a>
+    </div>
+
+    <div class="product-item">
+      <img src="img1.avif" alt="Produit 4">
+      <a href="Kemei-Épilateur.php" class="voir-plus">Voir plus</a>
+    </div>
+  </div>
+
+  <div class="products-description">
+    <p>
+      Découvrez l’épilation électrique, la solution rapide et efficace pour une peau lisse et soyeuse !<br>
+      Grâce à sa technologie innovante, cet appareil élimine les poils durablement tout en minimisant la douleur.<br>
+      Adapté à tous les types de peau, il vous offre un confort personnalisé.<br>
+      Transformez votre routine beauté et savourez la sensation d’une peau impeccable !
+    </p>
+  </div>
+</section>
+
+<!-- FORMULAIRE DE CONTACT -->
+<section class="contact-section">
+  <h2>Contactez-nous</h2>
+  <form class="contact-form">
+    <input type="text" placeholder="Votre nom" required>
+    <input type="text" placeholder="Votre prénom" required>
+    <input type="email" placeholder="Votre e-mail" required>
+    <button type="submit">Envoyer</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-info">
+    <h3>Egrowit</h3>
+    <p>71-75 Shelton Street, Covent Garden, London, United Kingdom WC2H 9JQ</p>
+    <p>📞 +33756756557</p>
+    <p>📧 <a href="mailto:info@maymashop.com">info@maymashop.com</a></p>
+  </div>
+  <div class="newsletter">
+    <h4>Abonnez-vous à notre newsletter</h4>
+    <input type="email" placeholder="Entrer votre adresse mail">
+    <button>S'inscrire</button>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

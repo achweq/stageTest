@@ -1,0 +1,36 @@
+<?php
+require_once 'create_db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $conn = new PDO("mysql:host=localhost;dbname=test", "root", "root");
+        
+        // Vérifier que le produit existe
+        $stmt = $conn->prepare("SELECT id FROM produits WHERE id = ?");
+        $stmt->execute([$_POST['product_id']]);
+        
+        if ($stmt->rowCount() > 0) {
+            // Enregistrer la commande
+            $stmt = $conn->prepare("INSERT INTO commandes 
+                                  (produit_id, nom_client, email, adresse, numero_carte)
+                                  VALUES 
+                                  (:pid, :nom, :email, :adresse, :carte)");
+            
+            $stmt->execute([
+                ':pid' => $_POST['product_id'],
+                ':nom' => $_POST['full-name'],
+                ':email' => $_POST['email'],
+                ':adresse' => $_POST['shipping-address'],
+                ':carte' => $_POST['card-number']
+            ]);
+            
+            // Redirection vers la page de confirmation
+            header("Location: confirmation.php?product_id=".$_POST['product_id']);
+            exit();
+        } else {
+            die("Produit invalide");
+        }
+    } catch(PDOException $e) {
+        die("Erreur: " . $e->getMessage());
+    }
+}

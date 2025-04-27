@@ -1,0 +1,76 @@
+const slides = document.querySelector('.slides');
+const totalSlides = document.querySelectorAll('.slide').length;
+let index = 0;
+
+document.querySelector('.next').onclick = () => {
+  index = (index + 1) % totalSlides;
+  slides.style.transform = `translateX(-${index * 100}vw)`;
+};
+
+document.querySelector('.prev').onclick = () => {
+  index = (index - 1 + totalSlides) % totalSlides;
+  slides.style.transform = `translateX(-${index * 100}vw)`;
+};
+// Slider code (garder la partie existante du slider si nécessaire)
+
+// Gestion du panier et du formulaire
+document.addEventListener("DOMContentLoaded", function() {
+  const addToCartButton = document.getElementById("add-to-cart");
+  const confirmationMessage = document.getElementById("confirmation-message");
+  const paymentForm = document.getElementById("payment-form");
+
+  // Si le formulaire a été soumis, on affiche directement le message
+  if (window.location.search.includes('success')) {
+    confirmationMessage.style.display = "block";
+    return;
+  }
+
+  addToCartButton.addEventListener("click", function() {
+    paymentForm.style.display = "block";
+    window.scrollTo({
+      top: paymentForm.offsetTop,
+      behavior: 'smooth'
+    });
+  });
+
+  // Gestion du formulaire
+  const form = document.getElementById("form");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      // Ici vous pourriez ajouter une validation supplémentaire
+      
+      // Soumission du formulaire
+      this.submit();
+    });
+  }
+}); function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            answer.style.display = answer.style.display === 'none' || answer.style.display === '' ? 'block' : 'none';
+        }
+
+        // Initialiser la FAQ
+        const faqAnswers = document.querySelectorAll('.faq-answer');
+        faqAnswers.forEach(answer => {
+            answer.style.display = 'none';
+        });
+		let currentIndex = 0;
+
+function switchImage() {
+    const carouselImages = document.querySelector('.carousel-images');
+    currentIndex = (currentIndex + 1) % 3; // Alterne entre 0 et 1
+    carouselImages.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+
+// Alterner toutes les 7 secondes
+setInterval(switchImage, 5000);
+// Afficher la bannière à chaque visite
+document.querySelector('.cookie-banner').style.display = 'block';
+
+// Gérer l'acceptation des cookies
+document.getElementById('accept-cookies').addEventListener('click', function() {
+    // Masquer la bannière après l'acceptation
+    document.querySelector('.cookie-banner').style.display = 'none';
+});
+
