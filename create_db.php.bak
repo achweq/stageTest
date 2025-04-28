@@ -1,94 +1,57 @@
 <?php
-// Configuration de la base de données
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $servername = "localhost";
 $username = "root";
-$password = "root";
-$dbname = "test";
+$password = "";
+$dbname = "test1";
 
 try {
-    // Connexion au serveur MySQL (sans spécifier de base)
+    // First connect WITHOUT database
     $conn = new PDO("mysql:host=$servername", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // 1. Création de la base de données si elle n'existe pas
-    $conn->exec("CREATE DATABASE IF NOT EXISTS $dbname 
-                CHARACTER SET utf8mb4 
-                COLLATE utf8mb4_unicode_ci");
-    $conn->exec("USE $dbname");
-    
-    // 2. Création de la table produits
-    $conn->exec("DROP TABLE IF EXISTS produits");
-    $conn->exec("CREATE TABLE produits (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(255) NOT NULL,
-        description TEXT,
-        prix DECIMAL(10,2) NOT NULL,
-        image VARCHAR(255),
-        categorie VARCHAR(100),
-        date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB");
-    
-    // 3. Création de la table commandes
-    $conn->exec("DROP TABLE IF EXISTS commandes");
-    $conn->exec("CREATE TABLE commandes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        produit_id INT NOT NULL,
-        nom_client VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        adresse TEXT NOT NULL,
-        numero_carte VARCHAR(255),
-        date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (produit_id) REFERENCES produits(id)
-    ) ENGINE=InnoDB");
-    
-    // 4. Insertion des produits de test
-    $products = [
-        [
-            'nom' => 'Épilateur en cristal chaud',
-            'description' => 'Épilateur sans douleur en verre, facile à nettoyer',
-            'prix' => 3.92,
-            'image' => 'img8.avif',
-            'categorie' => 'epilation'
-        ],
-        [
-            'nom' => 'Kemei-Épilateur électrique',
-            'description' => 'Épilateur pour femmes, facial, tondeuse pour bikini',
-            'prix' => 20.58,
-            'image' => 'img6.avif',
-            'categorie' => 'epilation'
-        ],
-        [
-            'nom' => 'Masque de beauté or',
-            'description' => 'Masque facial 24K pour peau éclatante',
-            'prix' => 12.99,
-            'image' => 'masque-or.jpg',
-            'categorie' => 'soin'
-        ]
-    ];
-    
-    foreach ($products as $product) {
-        $stmt = $conn->prepare("INSERT INTO produits 
-                              (nom, description, prix, image, categorie) 
-                              VALUES (:nom, :desc, :prix, :img, :cat)");
-        $stmt->execute([
-            ':nom' => $product['nom'],
-            ':desc' => $product['description'],
-            ':prix' => $product['prix'],
-            ':img' => $product['image'],
-            ':cat' => $product['categorie']
-        ]);
-    }
-    
-    // Message de succès
-    echo "Base de données initialisée avec succès!<br>";
-    echo count($products) . " produits insérés.<br>";
-    echo "Tables créées: produits, commandes";
-    
-} catch(PDOException $e) {
-    // Gestion des erreurs
-    die("<strong>ERREUR CRITIQUE:</strong> " . $e->getMessage());
-}
 
-// Fermeture de la connexion
-$conn = null;
+    // Check if database exists
+    $stmt = $conn->query("SHOW DATABASES LIKE '$dbname'");
+    $dbExists = $stmt->fetch();
+
+    // If not exists, create it
+    if (!$dbExists) {
+        $conn->exec("CREATE DATABASE `$dbname` 
+                     CHARACTER SET utf8mb4 
+                     COLLATE utf8mb4_unicode_ci");
+    }
+
+    // Now connect to the database
+    $conn->exec("USE `$dbname`");
+
+
+    // Create produits table if not exists
+    $conn->exec("CREATE TABLE IF NOT EXISTS `produits` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nom` VARCHAR(255) NOT NULL,
+        `description` TEXT,
+        `prix` DECIMAL(10,2) NOT NULL,
+        `image` VARCHAR(255),
+        `categorie` VARCHAR(100),
+        `date_ajout` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB");
+
+    // Create commandes table if not exists
+    $conn->exec("CREATE TABLE IF NOT EXISTS `commandes` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `produit_id` INT NOT NULL,
+        `nom_client` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(255) NOT NULL,
+        `adresse` TEXT NOT NULL,
+        `numero_carte` VARCHAR(255),
+        `date_commande` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (`produit_id`) REFERENCES `produits`(`id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB");
+
+} catch(PDOException $e) {
+    die("Database Connection Failed: " . $e->getMessage());
+}
 ?>

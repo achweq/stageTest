@@ -36,91 +36,224 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Rasoir électrique portable</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+        /* Tu peux mettre ici ton CSS si tu ne veux pas séparer */
+    header {
+      background-color: #f8f9fa;
+      padding: 10px 20px;
+    }
+
+    .account {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    .account-link, .cart {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .account-link:hover, .cart:hover {
+      color: #007bff;
+    }
+
+    .icon {
+      margin-right: 5px;
+    }
+
+    .main-nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .main-nav a:hover {
+      color: #007bff;
+    }
+
+    .product-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .product-image img {
+      max-width: 400px;
+      border-radius: 8px;
+    }
+
+    .product-details {
+      max-width: 500px;
+    }
+
+    .price {
+      color: #28a745;
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    .payment-form, .confirmation-message {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .footer {
+      background-color: #343a40;
+      color: white;
+      padding: 20px;
+      margin-top: 250px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .footer a {
+      color: #ffc107;
+      text-decoration: none;
+    }
+
+    .newsletter input {
+      padding: 8px;
+      margin-right: 8px;
+    }
+
+    .newsletter button {
+      padding: 8px 16px;
+      background-color: #ffc107;
+      border: none;
+      cursor: pointer;
+    }
+	</style>
 <body>
 
-  <!-- Conteneur du produit -->
-  <div class="product-container">
-    <!-- Image du produit -->
-    <div class="product-image">
-      <img src="img9.avif" alt="Épilateur en cristal chaud">
+<!-- HEADER -->
+<header>
+  <div class="account">
+
+    <a href="cart.php" class="cart">
+      <span class="icon">&#128722;</span> Panier
+    </a>
+  </div>
+  <nav class="main-nav">
+    <ul>
+      <li><a href="index.php">Acceuil</a></li>
+      <li><a href="indolore.php">indolore</a></li>
+	    <li><a href="cristal_chaud.php">cristal_chaud</a></li>
+      <li><a href="Kemei-Épilateur.php">Kemei-Épilateur</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Conteneur du produit -->
+<div class="product-container">
+  <!-- Image du produit -->
+  <div class="product-image">
+    <img src="img9.avif" alt="Rasoir électrique portable">
+  </div>
+  
+  <!-- Détails du produit -->
+  <div class="product-details">
+    <h1>Rasoir électrique portable</h1>
+    <p class="price">$4.80</p>
+    <p class="description">
+      Rasoir électrique portable indolore pour femme, épilateur, tondeuse, appareils de soins personnels, usage domestique
+    </p>
+    <button id="add-to-cart">Ajouter au panier</button>
+  </div>
+</div>
+
+<!-- Formulaire Paiement caché -->
+<div class="payment-form" id="payment-form" style="display: none;">
+  <h2>Formulaire de Paiement</h2>
+  <form id="payment-form-element" action="cristal_chaud.php" method="POST">
+    <div class="form-group">
+      <label for="full-name">Nom complet</label>
+      <input type="text" id="full-name" name="full-name" required>
     </div>
-    
-    <!-- Détails du produit -->
-    <div class="product-details">
-      <h1>>Rasoir électrique portable</h1>
-      <p class="price">$4.80</p>
-      <p class="description">
-     Rasoir électrique portable indolore pour femme, épilateur, tondeuse, appareils de soins personnels, usage domestique
-      <button id="add-to-cart">Ajouter au panier</button>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
     </div>
-  </div>
+    <div class="form-group">
+      <label for="card-number">Numéro de carte</label>
+      <input type="text" id="card-number" name="card-number" required>
+    </div>
+    <div class="form-group">
+      <label for="shipping-address">Adresse de livraison</label>
+      <input type="text" id="shipping-address" name="shipping-address" required>
+    </div>
+    <button type="submit">Confirmer le paiement</button>
+  </form>
+</div>
 
-  <!-- Formulaire Paiement caché -->
-  <div class="payment-form" id="payment-form" style="display: none;">
-    <h2>Formulaire de Paiement</h2>
-    <form id="payment-form-element" action="cristal_chaud.php" method="POST">
-      <div class="form-group">
-        <label for="full-name">Nom complet</label>
-        <input type="text" id="full-name" name="full-name" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="card-number">Numéro de carte</label>
-        <input type="text" id="card-number" required>
-      </div>
-      <div class="form-group">
-        <label for="shipping-address">Adresse de livraison</label>
-        <input type="text" id="shipping-address" name="shipping-address" required>
-      </div>
-      <button type="submit">Confirmer le paiement</button>
-    </form>
-  </div>
+<!-- Message de confirmation -->
+<div class="confirmation-message" id="confirmation-message" style="display: none;">
+  <h2>Merci pour votre commande ! ✅</h2>
+  <p>Votre commande a été enregistrée avec succès.</p>
+</div>
 
-  <!-- Message de confirmation -->
-  <div class="confirmation-message" id="confirmation-message" style="display: none;">
-    <h2>Merci pour votre commande ! ✅</h2>
-    <p>Votre commande a été enregistrée avec succès.</p>
-  </div>
+<!-- SCRIPT JavaScript -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const addToCartButton = document.getElementById("add-to-cart");
+  const paymentForm = document.getElementById("payment-form");
+  const confirmationMessage = document.getElementById("confirmation-message");
 
-  <!-- Script JavaScript -->
-  <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const addToCartButton = document.getElementById("add-to-cart");
-    const paymentForm = document.getElementById("payment-form");
-    const confirmationMessage = document.getElementById("confirmation-message");
-    
-    // Gestion du clic sur "Ajouter au panier"
-    addToCartButton.addEventListener("click", function() {
-      paymentForm.style.display = "block";
-      window.scrollTo({
-        top: paymentForm.offsetTop,
-        behavior: 'smooth'
-      });
+  addToCartButton.addEventListener("click", function() {
+    paymentForm.style.display = "block";
+    window.scrollTo({
+      top: paymentForm.offsetTop,
+      behavior: 'smooth'
     });
-    
-    // Gestion de la soumission du formulaire
-    const form = document.getElementById("payment-form-element");
-    if (form) {
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        // Ici vous pourriez ajouter une validation
-        confirmationMessage.style.display = "block";
-        paymentForm.style.display = "none";
-        
-        // Soumission du formulaire (décommenter pour l'envoi réel)
-        // this.submit();
-        
-        // Pour l'exemple, on affiche juste le message
-        setTimeout(() => {
-          form.reset();
-        }, 3000);
-      });
-    }
   });
-  </script>
+
+  const form = document.getElementById("payment-form-element");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      confirmationMessage.style.display = "block";
+      paymentForm.style.display = "none";
+
+      setTimeout(() => {
+        form.reset();
+      }, 3000);
+    });
+  }
+});
+</script>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-info">
+    <h3>Egrowit</h3>
+    <p>71-75 Shelton Street, Covent Garden, London, United Kingdom WC2H 9JQ</p>
+    <p>📞 +33756756557</p>
+    <p>📧 <a href="mailto:info@maymashop.com">info@maymashop.com</a></p>
+  </div>
+  <div class="newsletter">
+    <h4>Abonnez-vous à notre newsletter</h4>
+    <input type="email" placeholder="Entrer votre adresse mail">
+    <button>S'inscrire</button>
+  </div>
+</footer>
+
 </body>
 </html>

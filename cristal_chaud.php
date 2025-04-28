@@ -1,48 +1,42 @@
-
 <?php
-// Traitement du formulaire
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
-    $dbname = "test";
+require_once 'create_db.php'; // use the same connection
 
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try {
+    
+    $products = [
+        [
+            'nom' => 'Épilateur en cristal chaud',
+            'description' => 'Épilateur sans douleur en verre, facile à nettoyer',
+            'prix' => 3.92,
+            'image' => 'img8.avif',
+            'categorie' => 'epilation'
+        ],
+        [
+            'nom' => 'Kemei-Épilateur électrique',
+            'description' => 'Épilateur pour femmes, facial, tondeuse pour bikini',
+            'prix' => 20.58,
+            'image' => 'img6.avif',
+            'categorie' => 'epilation'
+        ]
+    ];
 
-        // Préparer la requête
-        $stmt = $conn->prepare("INSERT INTO commandes 
-                               (produit_id, nom_client, email, adresse, numero_carte) 
-                               VALUES 
-                               (:produit_id, :nom, :email, :adresse, :carte)");
-        
-        // Lier les paramètres
-        $stmt->bindParam(':produit_id', $_POST['product_id'] ?? 1, PDO::PARAM_INT);
-        $stmt->bindParam(':nom', $_POST['full-name'], PDO::PARAM_STR);
-        $stmt->bindParam(':email', $_POST['email'], PDO::PARAM_STR);
-        $stmt->bindParam(':adresse', $_POST['shipping-address'], PDO::PARAM_STR);
-        $stmt->bindParam(':carte', $_POST['card-number'], PDO::PARAM_STR);
-        
-        // Exécuter
-        if ($stmt->execute()) {
-            $confirmation = true;
-            // Redirection pour éviter la resoumission
-            header("Location: ".$_SERVER['PHP_SELF']."?success=1");
-            exit();
-        } else {
-            $error = "Erreur lors de l'enregistrement";
-        }
-    } catch(PDOException $e) {
-        $error = "Erreur DB: " . $e->getMessage();
+    foreach ($products as $product) {
+        $stmt = $conn->prepare("INSERT INTO `produits` 
+            (`nom`, `description`, `prix`, `image`, `categorie`) 
+            VALUES (:nom, :description, :prix, :image, :categorie)");
+        $stmt->execute([
+            'nom' => $product['nom'],
+            'description' => $product['description'],
+            'prix' => $product['prix'],
+            'image' => $product['image'],
+            'categorie' => $product['categorie']
+        ]);
     }
-}
 
-// Afficher le message de confirmation après redirection
-if (isset($_GET['success'])) {
-    $confirmation = true;
+    echo "Tables created and products inserted.";
+
+} catch(PDOException $e) {
+    die("Error: " . $e->getMessage());
 }
 ?>
 
@@ -136,7 +130,7 @@ if (isset($_GET['success'])) {
       background-color: #343a40;
       color: white;
       padding: 20px;
-      margin-top: 50px;
+      margin-top: 250px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -165,10 +159,7 @@ if (isset($_GET['success'])) {
 
 <header>
   <div class="account">
-    <a href="connecter.php" class="account-link">
-      <span class="icon">&#128100;</span> Mon compte
-    </a>
-    <a href="panier.php" class="cart">
+    <a href="cart.php" class="cart">
       <span class="icon">&#128722;</span> Panier
     </a>
   </div>
@@ -176,8 +167,9 @@ if (isset($_GET['success'])) {
   <nav class="main-nav">
     <ul>
       <li><a href="index.php">Accueil</a></li>
-      <li><a href="contact.php">Contact</a></li>
-      <li><a href="recherche.php">Rechercher ma commande</a></li>
+      <li><a href="indolore.php">indolore</a></li>
+	   <li><a href="portable.php">portable</a></li>
+      <li><a href="Kemei-Épilateur.php">Kemei-Épilateur</a></li>
     </ul>
   </nav>
 </header>

@@ -19,24 +19,128 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produit - Épilateur laser électrique</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+        /* Tu peux mettre ici ton CSS si tu ne veux pas séparer */
+    header {
+      background-color: #f8f9fa;
+      padding: 10px 20px;
+    }
+
+    .account {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    .account-link, .cart {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .account-link:hover, .cart:hover {
+      color: #007bff;
+    }
+
+    .icon {
+      margin-right: 5px;
+    }
+
+    .main-nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .main-nav a:hover {
+      color: #007bff;
+    }
+
+    .product-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .product-image img {
+      max-width: 1000px;
+      border-radius: 8px;
+    }
+
+    .product-details {
+      max-width: 500px;
+    }
+
+    .price {
+      color: #28a745;
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    .payment-form, .confirmation-message {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .footer {
+      background-color: #343a40;
+      color: white;
+      padding: 20px;
+      margin-top: 250px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .footer a {
+      color: #ffc107;
+      text-decoration: none;
+    }
+
+    .newsletter input {
+      padding: 8px;
+      margin-right: 8px;
+    }
+
+    .newsletter button {
+      padding: 8px 16px;
+      background-color: #ffc107;
+      border: none;
+      cursor: pointer;
+    }
+	</style>
 </head>
 <body>
+
 
 <!-- HEADER -->
 <header>
   <div class="account">
-    <a href="connecter.php" class="account-link">
-      <span class="icon">&#128100;</span> Mon compte
-    </a>
-    <a href="panier.php" class="cart">
+    <a href="cart.php" class="cart">
       <span class="icon">&#128722;</span> Panier
     </a>
   </div>
   <nav class="main-nav">
     <ul>
-      <li><a href="dhia.php">Acceuil</a></li>
-      <li><a href="contact.php">Contact</a></li>
-      <li><a href="recherche.php">Rechercher ma commande</a></li>
+      <li><a href="index.php">Acceuil</a></li>
+      <li><a href="cristal_chaud.php">cristal_chaud</a></li>
+	  <li><a href="portable.php">portable</a></li>
+      <li><a href="Kemei-Épilateur.php">Kemei-Épilateur</a></li>
     </ul>
   </nav>
 </header>

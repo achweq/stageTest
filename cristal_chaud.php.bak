@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Afficher le message de confirmation après redirection
-if (isset($_GET['success']) {
+if (isset($_GET['success'])) {
     $confirmation = true;
 }
 ?>
@@ -136,7 +136,7 @@ if (isset($_GET['success']) {
       background-color: #343a40;
       color: white;
       padding: 20px;
-      margin-top: 50px;
+      margin-top: 250px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -165,10 +165,7 @@ if (isset($_GET['success']) {
 
 <header>
   <div class="account">
-    <a href="connecter.php" class="account-link">
-      <span class="icon">&#128100;</span> Mon compte
-    </a>
-    <a href="panier.php" class="cart">
+    <a href="cart.php" class="cart">
       <span class="icon">&#128722;</span> Panier
     </a>
   </div>
@@ -176,8 +173,9 @@ if (isset($_GET['success']) {
   <nav class="main-nav">
     <ul>
       <li><a href="index.php">Accueil</a></li>
-      <li><a href="contact.php">Contact</a></li>
-      <li><a href="recherche.php">Rechercher ma commande</a></li>
+      <li><a href="indolore.php">indolore</a></li>
+	   <li><a href="portable.php">portable</a></li>
+      <li><a href="Kemei-Épilateur.php">Kemei-Épilateur</a></li>
     </ul>
   </nav>
 </header>

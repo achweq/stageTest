@@ -1,31 +1,48 @@
 <?php
-// Initialisation base
-require_once 'create_db.php';
+require_once 'create_db.php'; // Assurez-vous que ce fichier initialise $conn
 
-// Traitement formulaire
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $conn = new PDO("mysql:host=localhost;dbname=test", "root", "root");
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Préparation requête
-        $stmt = $conn->prepare("INSERT INTO commandes 
-                              (produit_id, nom_client, email, adresse, numero_carte) 
-                              VALUES 
-                              (1, :nom, :email, :adresse, :carte)");
-        
-        // Exécution
-        $stmt->execute([
-            ':nom' => $_POST['full-name'],
-            ':email' => $_POST['email'],
-            ':adresse' => $_POST['shipping-address'],
-            ':carte' => $_POST['card-number']
-        ]);
-
-        $confirmation = true;
-    } catch(PDOException $e) {
-        $error = "Erreur: " . $e->getMessage();
+try {
+    // Vérifier si la connexion à la base de données est établie
+    if (!$conn) {
+        throw new PDOException("La connexion à la base de données a échoué.");
     }
+
+    $products = [
+        [
+            'nom' => 'Rasoir électrique portable',
+            'description' => 'Rasoir électrique portable indolore pour femme, épilateur, tondeuse, appareils de soins personnels, usage domestique',
+            'prix' => 4.80,
+            'image' => 'img9.avif',
+            'categorie' => 'epilation'
+        ]
+    ];
+
+    $insertCount = 0;
+    
+    foreach ($products as $product) {
+        $stmt = $conn->prepare("INSERT INTO `produits` 
+            (`nom`, `description`, `prix`, `image`, `categorie`) 
+            VALUES (:nom, :description, :prix, :image, :categorie)");
+        
+        $success = $stmt->execute([
+            'nom' => $product['nom'],
+            'description' => $product['description'],
+            'prix' => $product['prix'],
+            'image' => $product['image'],
+            'categorie' => $product['categorie']
+        ]);
+        
+        if ($success) {
+            $insertCount++;
+        } else {
+            echo "Erreur lors de l'insertion du produit: " . $product['nom'] . "<br>";
+        }
+    }
+
+    echo "$insertCount produits ont été insérés avec succès dans la base de données.";
+
+} catch(PDOException $e) {
+    die("Erreur de base de données: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -36,23 +53,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Rasoir électrique portable</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+        /* Tu peux mettre ici ton CSS si tu ne veux pas séparer */
+    header {
+      background-color: #f8f9fa;
+      padding: 10px 20px;
+    }
+
+    .account {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    .account-link, .cart {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .account-link:hover, .cart:hover {
+      color: #007bff;
+    }
+
+    .icon {
+      margin-right: 5px;
+    }
+
+    .main-nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .main-nav a:hover {
+      color: #007bff;
+    }
+
+    .product-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .product-image img {
+      max-width: 400px;
+      border-radius: 8px;
+    }
+
+    .product-details {
+      max-width: 500px;
+    }
+
+    .price {
+      color: #28a745;
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    .payment-form, .confirmation-message {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .footer {
+      background-color: #343a40;
+      color: white;
+      padding: 20px;
+      margin-top: 250px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .footer a {
+      color: #ffc107;
+      text-decoration: none;
+    }
+
+    .newsletter input {
+      padding: 8px;
+      margin-right: 8px;
+    }
+
+    .newsletter button {
+      padding: 8px 16px;
+      background-color: #ffc107;
+      border: none;
+      cursor: pointer;
+    }
+	</style>
 <body>
 
 <!-- HEADER -->
 <header>
   <div class="account">
-    <a href="connecter.php" class="account-link">
-      <span class="icon">&#128100;</span> Mon compte
-    </a>
-    <a href="panier.php" class="cart">
+
+    <a href="cart.php" class="cart">
       <span class="icon">&#128722;</span> Panier
     </a>
   </div>
   <nav class="main-nav">
     <ul>
-      <li><a href="dhia.php">Acceuil</a></li>
-      <li><a href="contact.php">Contact</a></li>
-      <li><a href="recherche.php">Rechercher ma commande</a></li>
+      <li><a href="index.php">Acceuil</a></li>
+      <li><a href="indolore.php">indolore</a></li>
+	    <li><a href="cristal_chaud.php">cristal_chaud</a></li>
+      <li><a href="Kemei-Épilateur.php">Kemei-Épilateur</a></li>
     </ul>
   </nav>
 </header>

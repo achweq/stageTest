@@ -1,0 +1,264 @@
+<?php
+session_start();
+
+// Initialize the cart if it doesn't exist
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Function to add items to the cart
+function addToCart($id, $name, $price, $quantity, $color, $size) {
+    // Check if the product is already in the cart
+    foreach ($_SESSION['cart'] as &$item) {
+        if ($item['id'] === $id) {
+            $item['quantity'] += $quantity;  // Update quantity if already in the cart
+            return;
+        }
+    }
+
+    // Add new product to the cart if not already present
+    $_SESSION['cart'][] = [
+        'id' => $id,
+        'name' => htmlspecialchars($name),
+        'price' => $price,
+        'quantity' => $quantity,
+    
+    ];
+}
+
+// Handle form submission to add products to the cart
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) && isset($_POST['name']) && isset($_POST['price']) && isset($_POST['quantity']) && isset($_POST['color']) && isset($_POST['size'])) {
+    $id = (int)$_POST['id'];
+    $name = htmlspecialchars($_POST['name']);
+    $price = (float)$_POST['price'];
+    $quantity = (int)$_POST['quantity'];
+
+    addToCart($id, $name, $price, $quantity,);
+}
+
+
+
+    // Remove the item from the cart
+    if (isset($_SESSION['cart'][$itemIdToRemove])) {
+        unset($_SESSION['cart'][$itemIdToRemove]);
+    }
+    // Redirect to prevent resubmission on refresh
+    header("Location: cart.php");
+    exit; // Ensure no further code is executed after redirect
+
+
+// Display total cost of items in the cart
+$total = 0;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Your Shopping Cart</h1>
+        <nav>
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="products.php">Products</a></li>
+                <li><a href="Discounted_Products.php">Offers</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Color</th>
+                    <th>Size</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!empty($_SESSION['cart'])) {
+                    foreach ($_SESSION['cart'] as $id => $item) {
+                        $itemTotal = $item['price'] * $item['quantity'];
+                        $total += $itemTotal;
+                        echo "<tr>
+                            <td>" . htmlspecialchars($item['name']) . "</td>
+                            <td>\$" . number_format($item['price'], 2) . "</td>
+                            <td>" . (int)$item['quantity'] . "</td>
+                            <td>\$" . number_format($itemTotal, 2) . "</td>
+                            <td><a href='?action=remove&id=" . urlencode($id) . "'>Remove</a></td>
+                        </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='7'>Your cart is empty.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+
+        <div class="cart-total">
+            <h2>Total: $<?php echo number_format($total, 2); ?></h2>
+        </div>
+
+        <div class="checkout">
+            <a href="payment.php" class="checkout-btn">Click to Pay</a>
+        </div>
+    </main>
+</body>
+</html>
+
+<footer>
+    <p>&copy; 2024 Haneul. All Rights Reserved.</p>
+</footer>
+<style>
+/* General Styles */
+body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Header */
+header {
+    background-color: #f4978e;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: white;
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Cart Section */
+.cart {
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart h2 {
+    font-size: 2rem;
+    color: #5e548e;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f4978e;
+    color: white;
+}
+
+table td {
+    font-size: 1rem;
+    color: #444;
+}
+
+/* Remove Button */
+.remove {
+    background-color: #f08080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.remove:hover {
+    background-color: #e57373;
+}
+
+/* Cart Summary */
+.cart-summary {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.cart-summary p {
+    font-size: 1.3rem;
+    color: #5e548e;
+}
+
+.checkout-btn {
+    background-color: #f4978e;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+	margin-left:700px;
+}
+
+.checkout-btn:hover {
+    background-color: #f08080;
+}
+
+
+/* Footer */
+footer {
+    background-color: #5e548e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 325px;
+}
+
+footer p {
+    margin: 0;
+}
+
+</style>
+</body>
+</html>
