@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "";
 $dbname = "test1";
 
 try {
@@ -35,6 +35,7 @@ try {
         `prix` DECIMAL(10,2) NOT NULL,
         `image` VARCHAR(255),
         `categorie` VARCHAR(100),
+        `store_availability` VARCHAR(255),
         `date_ajout` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB");
 

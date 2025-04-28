@@ -1,21 +1,12 @@
 <?php
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "test";
+require_once 'create_db.php'; // use the same connection
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Récupérer les produits (même si ici tu ne les utilises pas encore)
-    $stmt = $conn->query("SELECT * FROM produits");
-    $produits = $stmt->fetchAll();
-} catch(PDOException $e) {
-    echo "Erreur : " . $e->getMessage();
-}
+$query = "SELECT * FROM produits";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -46,28 +37,15 @@ try {
 
 <!-- PRODUITS -->
 <section class="products">
-  <h2>Découvrez notre gamme de produits</h2>
-
-  <div class="products-row">
-    <div class="product-item">
-      <img src="img8.avif" alt="Produit 1">
-      <a href="cristal_chaud.php" class="voir-plus">Voir plus</a>
-    </div>
-
-    <div class="product-item">
-      <img src="img10.avif" alt="Produit 2">
-      <a href="indolore.php" class="voir-plus">Voir plus</a>
-    </div>
-
-    <div class="product-item">
-      <img src="img2.avif" alt="Produit 3">
-      <a href="portable.php" class="voir-plus">Voir plus</a>
-    </div>
-
-    <div class="product-item">
-      <img src="img1.avif" alt="Produit 4">
-      <a href="Kemei-Épilateur.php" class="voir-plus">Voir plus</a>
-    </div>
+<div class="products-row">
+    <?php foreach ($result as $row): ?>
+      <div class="product-item">
+        <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nom']); ?>">
+        <h3><?php echo htmlspecialchars($row['nom']); ?></h3>
+        <p><?php echo htmlspecialchars($row['prix']); ?> €</p>
+        <a href="productdetails.php?id=<?php echo urlencode($row['id']); ?>" class="voir-plus">Voir plus</a>
+      </div>
+    <?php endforeach; ?>
   </div>
 
   <div class="products-description">
@@ -92,20 +70,7 @@ try {
 </section>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-info">
-    <h3>Egrowit</h3>
-    <p>71-75 Shelton Street, Covent Garden, London, United Kingdom WC2H 9JQ</p>
-    <p>📞 +33756756557</p>
-    <p>📧 <a href="mailto:info@maymashop.com">info@maymashop.com</a></p>
-  </div>
-  <div class="newsletter">
-    <h4>Abonnez-vous à notre newsletter</h4>
-    <input type="email" placeholder="Entrer votre adresse mail">
-    <button>S'inscrire</button>
-  </div>
-</footer>
-
+<?php include 'footer.php'; ?>
 <script src="script.js"></script>
 </body>
 </html>

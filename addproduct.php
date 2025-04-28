@@ -1,18 +1,20 @@
 <?php
-require_once 'db_config.php';
+require_once 'create_db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $conn->prepare("INSERT INTO produits 
-            (nom, description, prix, image, categorie) 
-            VALUES (:nom, :description, :prix, :image, :categorie)");
+            (nom, description, prix, image, categorie,store_availability) 
+            VALUES (:nom, :description, :prix, :image, :categorie, :store_availability)");
         
         $stmt->execute([
             'nom' => $_POST['nom'],
             'description' => $_POST['description'],
             'prix' => $_POST['prix'],
             'image' => $_POST['image'],
-            'categorie' => $_POST['categorie']
+            'categorie' => $_POST['categorie'],
+            'store_availability' => $_POST['store_availability']
+
         ]);
 
         echo "Product added successfully.";
@@ -43,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="number" step="0.01" name="prix" placeholder="Price" required>
     <input type="text" name="image" placeholder="Image Path (e.g., img.jpg)" required>
     <input type="text" name="categorie" placeholder="Category" required>
+    <input type="text" name="store_availability" placeholder="store_availability" required>
     <button type="submit">Add Product</button>
 </form>
 
