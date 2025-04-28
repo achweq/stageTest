@@ -70,6 +70,31 @@ if (!$product) {
             <button class="add-to-cart">Ajouter Au Panier</button>
             
             <div class="store-availability">
+                <h3>Magasin</h3>
+                <ul>
+                    <li>Boutique Tunis - <span class="available">Disponible</span></li>
+                    <li>Sousse - <span class="not-available">Non disponible</span></li>
+                    <li>Sfax - <span class="not-available">Non disponible</span></li>
+                    <li>Tunis Drive-In - <span class="available">Disponible</span></li>
+                </ul>
+            </div>
+            
+            <div class="payment-options">
+                <h3>Payez en plusieurs fois par traites</h3>
+                <table>
+                    <tr>
+                        <th>12 mois</th>
+                        <th>9 mois</th>
+                        <th>6 mois</th>
+                        <th>3 mois</th>
+                    </tr>
+                    <tr>
+                        <td>46.034 DT</td>
+                        <td>58.087 DT</td>
+                        <td>84.957 DT</td>
+                        <td>153 DT</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

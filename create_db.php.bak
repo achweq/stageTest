@@ -35,6 +35,7 @@ try {
         `prix` DECIMAL(10,2) NOT NULL,
         `image` VARCHAR(255),
         `categorie` VARCHAR(100),
+        `store_availability` VARCHAR(255),
         `date_ajout` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB");
 
