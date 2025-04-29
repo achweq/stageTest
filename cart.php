@@ -1,264 +1,187 @@
 <?php
+require_once 'create_db.php';
 session_start();
 
-// Initialize the cart if it doesn't exist
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// Handle remove from cart action
+if (isset($_GET['remove'])) {
+    $product_id = $_GET['remove'];
+    if (isset($_SESSION['cart'][$product_id])) {
+        unset($_SESSION['cart'][$product_id]);
+        $_SESSION['cart_message'] = ['type' => 'success', 'text' => 'Produit retiré du panier'];
+    }
+    header("Location: cart.php");
+    exit;
 }
 
-// Function to add items to the cart
-function addToCart($id, $name, $price, $quantity, $color, $size) {
-    // Check if the product is already in the cart
-    foreach ($_SESSION['cart'] as &$item) {
-        if ($item['id'] === $id) {
-            $item['quantity'] += $quantity;  // Update quantity if already in the cart
-            return;
+// Handle quantity update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_cart'])) {
+    foreach ($_POST['quantities'] as $product_id => $quantity) {
+        if ($quantity > 0) {
+            $_SESSION['cart'][$product_id] = $quantity;
+        } else {
+            unset($_SESSION['cart'][$product_id]);
         }
     }
-
-    // Add new product to the cart if not already present
-    $_SESSION['cart'][] = [
-        'id' => $id,
-        'name' => htmlspecialchars($name),
-        'price' => $price,
-        'quantity' => $quantity,
-    
-    ];
-}
-
-// Handle form submission to add products to the cart
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) && isset($_POST['name']) && isset($_POST['price']) && isset($_POST['quantity']) && isset($_POST['color']) && isset($_POST['size'])) {
-    $id = (int)$_POST['id'];
-    $name = htmlspecialchars($_POST['name']);
-    $price = (float)$_POST['price'];
-    $quantity = (int)$_POST['quantity'];
-
-    addToCart($id, $name, $price, $quantity,);
-}
-
-
-
-    // Remove the item from the cart
-    if (isset($_SESSION['cart'][$itemIdToRemove])) {
-        unset($_SESSION['cart'][$itemIdToRemove]);
-    }
-    // Redirect to prevent resubmission on refresh
+    $_SESSION['cart_message'] = ['type' => 'success', 'text' => 'Panier mis à jour'];
     header("Location: cart.php");
-    exit; // Ensure no further code is executed after redirect
+    exit;
+}
 
-
-// Display total cost of items in the cart
+// Get cart products
+$cart_products = [];
 $total = 0;
+
+if (!empty($_SESSION['cart'])) {
+    $placeholders = implode(',', array_fill(0, count($_SESSION['cart']), '?'));
+    $stmt = $conn->prepare("SELECT * FROM produits WHERE id IN ($placeholders)");
+    $stmt->execute(array_keys($_SESSION['cart']));
+    $cart_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Calculate total
+    foreach ($cart_products as $product) {
+        $total += $product['prix'] * $_SESSION['cart'][$product['id']];
+    }
+}
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Votre Panier - Mayma Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cart.css">
 </head>
 <body>
-    <header>
-        <h1>Your Shopping Cart</h1>
-        <nav>
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="products.php">Products</a></li>
-                <li><a href="Discounted_Products.php">Offers</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Color</th>
-                    <th>Size</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if (!empty($_SESSION['cart'])) {
-                    foreach ($_SESSION['cart'] as $id => $item) {
-                        $itemTotal = $item['price'] * $item['quantity'];
-                        $total += $itemTotal;
-                        echo "<tr>
-                            <td>" . htmlspecialchars($item['name']) . "</td>
-                            <td>\$" . number_format($item['price'], 2) . "</td>
-                            <td>" . (int)$item['quantity'] . "</td>
-                            <td>\$" . number_format($itemTotal, 2) . "</td>
-                            <td><a href='?action=remove&id=" . urlencode($id) . "'>Remove</a></td>
-                        </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='7'>Your cart is empty.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-
-        <div class="cart-total">
-            <h2>Total: $<?php echo number_format($total, 2); ?></h2>
+    <?php include 'navbar.php'; ?>
+    
+    <div class="container">
+        <!-- Cart Message -->
+        <?php if (isset($_SESSION['cart_message'])): ?>
+            <div class="cart-message <?php echo $_SESSION['cart_message']['type']; ?>" id="cart-message">
+                <i class="fas fa-<?php echo $_SESSION['cart_message']['type'] === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+                <span><?php echo $_SESSION['cart_message']['text']; ?></span>
+                <span class="message-close">&times;</span>
+            </div>
+            <?php unset($_SESSION['cart_message']); ?>
+        <?php endif; ?>
+        
+        <div class="cart-header">
+            <h1 class="cart-title">Votre Panier</h1>
+            <div class="cart-steps">
+                <div class="step active">
+                    <span class="step-number">1</span>
+                    <span>Panier</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <span>Livraison</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <span>Paiement</span>
+                </div>
+            </div>
         </div>
-
-        <div class="checkout">
-            <a href="payment.php" class="checkout-btn">Click to Pay</a>
-        </div>
-    </main>
-</body>
-</html>
-
-<footer>
-    <p>&copy; 2024 Haneul. All Rights Reserved.</p>
-</footer>
-<style>
-/* General Styles */
-body {
-    font-family: 'Noto Sans', sans-serif;
-    background-color: #fafafa;
-    margin: 0;
-    padding: 0;
-    color: #333;
-}
-
-/* Header */
-header {
-    background-color: #f4978e;
-    padding: 20px;
-    text-align: center;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    color: white;
-    margin: 0;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 10px;
-}
-
-nav ul li {
-    display: inline;
-    margin: 0 15px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-nav ul li a:hover {
-    text-decoration: underline;
-}
-
-/* Cart Section */
-.cart {
-    max-width: 900px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.cart h2 {
-    font-size: 2rem;
-    color: #5e548e;
-    text-align: center;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-table th, table td {
-    border: 1px solid #ddd;
-    padding: 15px;
-    text-align: center;
-}
-
-table th {
-    background-color: #f4978e;
-    color: white;
-}
-
-table td {
-    font-size: 1rem;
-    color: #444;
-}
-
-/* Remove Button */
-.remove {
-    background-color: #f08080;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.remove:hover {
-    background-color: #e57373;
-}
-
-/* Cart Summary */
-.cart-summary {
-    text-align: right;
-    margin-top: 20px;
-}
-
-.cart-summary p {
-    font-size: 1.3rem;
-    color: #5e548e;
-}
-
-.checkout-btn {
-    background-color: #f4978e;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-block;
-	margin-left:700px;
-}
-
-.checkout-btn:hover {
-    background-color: #f08080;
-}
-
-
-/* Footer */
-footer {
-    background-color: #5e548e;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 325px;
-}
-
-footer p {
-    margin: 0;
-}
-
-</style>
+        
+        <?php if (empty($cart_products)): ?>
+            <div class="empty-cart">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h2>Votre panier est vide</h2>
+                <p>Parcourez nos produits et trouvez quelque chose qui vous plaît</p>
+                <a href="index.php" class="continue-shopping">Continuer vos achats</a>
+            </div>
+        <?php else: ?>
+            <div class="cart-layout">
+                <div class="cart-items">
+                    <form method="post" action="cart.php">
+                        <input type="hidden" name="update_cart" value="1">
+                        
+                        <?php foreach ($cart_products as $product): ?>
+                            <div class="cart-item">
+                                <div class="cart-item-image-container">
+                                    <img src="<?php echo htmlspecialchars($product['image']); ?>" 
+                                         alt="<?php echo htmlspecialchars($product['nom']); ?>"
+                                         class="cart-item-image">
+                                </div>
+                                <div class="cart-item-details">
+                                    <a href="#" class="cart-item-name"><?php echo htmlspecialchars($product['nom']); ?></a>
+                                    <span class="cart-item-category"><?php echo htmlspecialchars($product['categorie']); ?></span>
+                                </div>
+                                <div class="cart-item-price">
+                                    <?php echo number_format($product['prix'], 3, '.', ' '); ?> DT
+                                </div>
+                                <div class="cart-item-quantity">
+                                    <input type="number" 
+                                           name="quantities[<?php echo $product['id']; ?>]" 
+                                           value="<?php echo $_SESSION['cart'][$product['id']]; ?>" 
+                                           min="1" 
+                                           class="quantity-input">
+                                </div>
+                                <div class="cart-item-total">
+                                    <?php 
+                                    $item_total = $product['prix'] * $_SESSION['cart'][$product['id']];
+                                    echo number_format($item_total, 3, '.', ' '); ?> DT
+                                </div>
+                                <div class="cart-item-remove" onclick="window.location.href='cart.php?remove=<?php echo $product['id']; ?>'">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        
+                        <button type="submit" class="update-cart">
+                            <i class="fas fa-sync-alt"></i> Mettre à jour le panier
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="cart-summary">
+                    <h3 class="summary-title">Résumé de la commande</h3>
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span><?php echo number_format($total, 3, '.', ' '); ?> DT</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison</span>
+                        <span>Calculé à l'étape suivante</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span><?php echo number_format($total, 3, '.', ' '); ?> DT</span>
+                    </div>
+                    <a href="checkout.php" class="checkout-btn">
+                        <i class="fas fa-credit-card"></i> Passer la commande
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+    
+    <?php include 'footer.php'; ?>
+    
+    <script>
+        // Show message
+        const message = document.getElementById('cart-message');
+        if (message) {
+            setTimeout(() => {
+                message.classList.add('show');
+            }, 100);
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 5000);
+            
+            // Close button
+            const closeBtn = message.querySelector('.message-close');
+            closeBtn.addEventListener('click', () => {
+                message.classList.remove('show');
+            });
+        }
+    </script>
 </body>
 </html>

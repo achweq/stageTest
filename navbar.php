@@ -19,7 +19,9 @@
     <div class="nav-icons">
       <a href="cart.php" class="cart-icon">
        
-        <span class="icon">&#128722;</span> Panier
+        <span class="icon">&#128722; <?php 
+        echo isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
+        ?></span> Panier
       </a>
     </div>
   </div>

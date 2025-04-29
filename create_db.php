@@ -4,8 +4,8 @@ ini_set('display_errors', 1);
 
 $servername = "localhost";
 $username = "root";
-$password = "root";
-$dbname = "test1";
+$password = "";
+$dbname = "maymashop";
 
 try {
     // First connect WITHOUT database
@@ -39,19 +39,26 @@ try {
         `date_ajout` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB");
 
-    // Create commandes table if not exists
-    $conn->exec("CREATE TABLE IF NOT EXISTS `commandes` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
-        `produit_id` INT NOT NULL,
-        `nom_client` VARCHAR(255) NOT NULL,
-        `email` VARCHAR(255) NOT NULL,
-        `adresse` TEXT NOT NULL,
-        `numero_carte` VARCHAR(255),
-        `date_commande` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (`produit_id`) REFERENCES `produits`(`id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB");
+// Create new structure
+$conn->exec("CREATE TABLE IF NOT EXISTS `commandes` (
+    `commande_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nom_client` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `adresse` TEXT NOT NULL,
+    `numero_carte` VARCHAR(255),
+    `montant_total` DECIMAL(10,2) NOT NULL,
+    `date_commande` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB");
 
+$conn->exec("CREATE TABLE IF NOT EXISTS `commande_items` (
+    `item_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `commande_id` INT NOT NULL,
+    `produit_id` INT NOT NULL,
+    `quantite` INT NOT NULL,
+    `prix_unitaire` DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (`commande_id`) REFERENCES `commandes`(`commande_id`),
+    FOREIGN KEY (`produit_id`) REFERENCES `produits`(`id`)
+) ENGINE=InnoDB");;
 } catch(PDOException $e) {
     die("Database Connection Failed: " . $e->getMessage());
 }

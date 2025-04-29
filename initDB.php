@@ -8,7 +8,7 @@ try {
             'nom' => 'Épilateur en cristal chaud',
             'description' => 'Épilateur sans douleur en verre, facile à nettoyer',
             'prix' => 3.92,
-            'image' => 'img8.avif',
+            'image' => 'images/img8.avif',
             'categorie' => 'epilation',
             'store_availability' => 'yes'
         ],
@@ -16,7 +16,7 @@ try {
             'nom' => 'Kemei-Épilateur électrique',
             'description' => 'Épilateur pour femmes, facial, tondeuse pour bikini',
             'prix' => 20.58,
-            'image' => 'img6.avif',
+            'image' => 'images/img6.avif',
             'categorie' => 'epilation',
             'store_availability' => 'yes'
         ],
@@ -24,7 +24,7 @@ try {
             'nom' => 'Épilateur laser électrique indolore',
             'description' => 'Épilateur laser électrique indolore, photoépilateur en continu IPL, machine d’épilation, 999999 flashs, offre spéciale, nouveau',
             'prix' => 34.26,
-            'image' => 'img5.avif',
+            'image' => 'images/img5.avif',
             'categorie' => 'epilation',
             'store_availability' => 'yes'
         ],
@@ -32,15 +32,15 @@ try {
             'nom' => 'Rasoir électrique portable',
             'description' => 'Rasoir électrique portable indolore pour femme, épilateur, tondeuse, appareils de soins personnels, usage domestique',
             'prix' => 4.80,
-            'image' => 'img2.avif',
+            'image' => 'images/img2.avif',
             'categorie' => 'epilation',
             'store_availability' => 'yes'
         ],
 		[
-            'nom' => 'Rasoir électrique portable',
+            'nom' => 'Nourishing Nail & Cuticle Serum',
             'description' => 'Rasoir électrique portable indolore pour femme, épilateur, tondeuse, appareils de soins personnels, usage domestique',
             'prix' => 4.80,
-            'image' => 'img2.avif',
+            'image' => 'images/img2.avif',
             'categorie' => 'epilation',
             'store_availability' => 'yes'
         ]

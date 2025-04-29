@@ -23,10 +23,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <section class="slider">
   <div class="slides">
     <div class="slide">
-      <img src="sl1.png" alt="Produit 1">
+      <img src="images/sl1.png" alt="Produit 1">
     </div>
     <div class="slide">
-      <img src="sl2.png" alt="Produit 2">
+      <img src="images/sl2.png" alt="Produit 2">
     </div>
   </div>
 
@@ -42,7 +42,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="product-item">
         <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nom']); ?>">
         <h3><?php echo htmlspecialchars($row['nom']); ?></h3>
-        <p><?php echo htmlspecialchars($row['prix']); ?> €</p>
+        <p><?php echo htmlspecialchars($row['prix']); ?> DT TTC</p>
         <a href="productdetails.php?id=<?php echo urlencode($row['id']); ?>" class="voir-plus">Voir plus</a>
       </div>
     <?php endforeach; ?>

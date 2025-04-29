@@ -1,29 +1,42 @@
 <?php
-$productId = $_GET['product_id'] ?? 0;
-
-try {
-    $conn = new PDO("mysql:host=localhost;dbname=test", "root", "root");
-    $stmt = $conn->prepare("SELECT nom FROM produits WHERE id = ?");
-    $stmt->execute([$productId]);
-    $product = $stmt->fetch();
-} catch(PDOException $e) {
-    die("Erreur: " . $e->getMessage());
-}
+require_once 'create_db.php';
+session_start();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Commande confirmée</title>
+    <meta charset="UTF-8">
+    <title>Confirmation - Mayma Shop</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .confirmation-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .confirmation-icon {
+            font-size: 60px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="confirmation-message">
-        <h2>Merci pour votre commande ! ✅</h2>
-        <?php if($product): ?>
-        <p>Votre commande de <strong><?= htmlspecialchars($product['nom']) ?></strong> a été enregistrée.</p>
-        <?php endif; ?>
+    <?php include 'navbar.php'; ?>
+    
+    <div class="confirmation-container">
+        <div class="confirmation-icon">✓</div>
+        <h1>Merci pour votre commande!</h1>
+        <p>Votre commande a été passée avec succès.</p>
         <p>Un email de confirmation vous a été envoyé.</p>
+        <a href="index.php" class="voir-plus">Retour à la boutique</a>
     </div>
+    
+    <?php include 'footer.php'; ?>
 </body>
 </html>
